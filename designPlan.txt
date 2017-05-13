@@ -1,0 +1,33 @@
+### Window:
+
+	|- archive layer
+	|- storage layer
+	|- network
+	|- near storage layer - NVRAM
+	|- memory layer
+	|- job run layer
+	|- notes
+
+### Variables
+
+layers -  The order of items in the array will be used as the order in diagram from top to below.
+
+tasks - The order of items in the array will be used as the order in "Job Run Layer" from left to right.
+
+dataset - The list of all dataset in this diagram, each dataset includes its size (mb), type, and an array of locations it(ie. the circle in the diagram) appears.
+    size   - floating number
+    type   - String
+    locale - array of Strings
+
+dataflow - This is used to draw lines and arrows. It is an array of key:value pairs which represents the starting and ending points of each line.
+
+human - the places to put a human icon in the Job Run Layer.
+
+### Colors
+
+Layers' color will be fixed order as the sample diagram shows.
+Circles for dataset will choose a different color with its layer to make it detectable.
+
+### Function Prototypes
+
+def

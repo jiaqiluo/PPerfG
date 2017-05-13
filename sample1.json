@@ -1,0 +1,63 @@
+{
+  "layers" : [
+    "Archive", "Storage", "Network",
+    "Near Storage Layer", "Memory Layer", "Job Run Layer"
+  ],
+  "tasks" : [
+    "Setup", "Application", "Monitoring",
+    "Analysis", "Visualization"
+  ],
+  "dataset" : {
+    "D" : {
+      "size" : 10,
+      "type" : "binary file",
+      "locale" : ["Storage"]
+    },
+    "E" : {
+      "size" : 8,
+      "type" : "binary file",
+      "locale" : ["Storage"]
+    },
+    "A" : {
+      "size" : 15,
+      "type" : ".txt file",
+      "locale" : ["Storage", "Memory"]
+    },
+    "B" : {
+      "size" : 25.3,
+      "type" : "internal file",
+      "locale" : ["Storage"]
+    },
+    "C" : {
+      "size" : 22.1,
+      "type" : "internal file",
+      "locale" : ["Storage"]
+    },
+    "A1/2" : {
+      "size" : 13.4,
+      "type" : "executable file",
+      "locale" : ["Memory"]
+    },
+    "A3" : {
+      "size": 13.2,
+      "type" : "executable file",
+      "locale" : ["Memory"]
+    }
+  },
+  "dataflow" : {
+    "Setup" : "A",
+    "D" : "Setup",
+    "Setup" : "E",
+    "A" : "Application",
+    "E" : "Application",
+    "A1/2" : "Application",
+    "A3" : "Application",
+    "A3" : "B",
+    "A3" : "C",
+    "C" : "Visualization"
+  },
+  "human" : [
+    "Setup" , "Application", "Analysis",
+    "Visualization"
+  ]
+}
