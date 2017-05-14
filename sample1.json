@@ -11,50 +11,52 @@
     "D" : {
       "size" : 10,
       "type" : "binary file",
-      "locale" : ["Storage"]
+      "createdLayer" : "Storage",
+      "usedLayer" : ["Setup"],
+      "accessMethod" : []
     },
     "E" : {
       "size" : 8,
       "type" : "binary file",
-      "locale" : ["Storage"]
+      "createdLayer" : "Setup",
+      "usedLayer" : ["Memory"],
+      "accessMethod" : []
     },
     "A" : {
       "size" : 15,
       "type" : ".txt file",
-      "locale" : ["Storage", "Memory"]
+      "createdLayer" : "Setup",
+      "usedLayer" : ["Memory", "Application"],
+      "accessMethod" : ["Memory"]
     },
     "B" : {
       "size" : 25.3,
       "type" : "internal file",
-      "locale" : ["Storage"]
+      "createdLayer" : "Memory",
+      "usedLayer" : ["Application"],
+      "accessMethod" : []
     },
     "C" : {
       "size" : 22.1,
       "type" : "internal file",
-      "locale" : ["Storage"]
+      "createdLayer" : "Storage",
+      "usedLayer" : ["A3"],
+      "accessMethod" : []
     },
     "A1/2" : {
       "size" : 13.4,
       "type" : "executable file",
-      "locale" : ["Memory"]
+      "createdLayer" : "Memory",
+      "usedLayer" : ["Application"],
+      "accessMethod" : []
     },
     "A3" : {
       "size": 13.2,
       "type" : "executable file",
-      "locale" : ["Memory"]
+      "createdLayer" : "Application",
+      "usedLayer" : ["Memory"],
+      "accessMethod" : []
     }
-  },
-  "dataflow" : {
-    "Setup" : "A",
-    "D" : "Setup",
-    "Setup" : "E",
-    "A" : "Application",
-    "E" : "Application",
-    "A1/2" : "Application",
-    "A3" : "Application",
-    "A3" : "B",
-    "A3" : "C",
-    "C" : "Visualization"
   },
   "human" : [
     "Setup" , "Application", "Analysis",

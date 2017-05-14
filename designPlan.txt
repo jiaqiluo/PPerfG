@@ -14,12 +14,15 @@ layers -  The order of items in the array will be used as the order in diagram f
 
 tasks - The order of items in the array will be used as the order in "Job Run Layer" from left to right.
 
-dataset - The list of all dataset in this diagram, each dataset includes its size (mb), type, and an array of locations it(ie. the circle in the diagram) appears.
-    size   - floating number
-    type   - String
-    locale - array of Strings
-
-dataflow - This is used to draw lines and arrows. It is an array of key:value pairs which represents the starting and ending points of each line.
+dataset - The list of all dataset in this diagram, each dataset includes its size (mb), type, createdLayer, usedLayer, and accessMethod
+    size         - the size of the dataset         : floating number
+    type         - the type of the dataset         : String
+    createdLayer - where the dataset is created    : String
+    usedLayer    - where the dataset is used       : array of Strings
+    accessMethod - how the dataset is accessed     : array of Strings or Empty
+* More explanation for accessMethod: the accessMethod will be used to draw lines and directions. Its value will be one ore more layers or the name of other datasets. For example, if the createdLayer is "Storage", usedLayer is "Setup", and accessMethod is "Memory", then there will be
+    - tow circles: one in Storage Layer and another in Memory Layer
+    - two arrow lines: one from the circle in Storage Layer to the circle in Memory   Layer, one form the circle in Memory Layer to Setup.
 
 human - the places to put a human icon in the Job Run Layer.
 
