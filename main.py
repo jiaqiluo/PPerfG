@@ -1,12 +1,17 @@
 #!/usr/bin/python
 from Tkinter import *
 import math
+from load import *
 
 master = Tk()
 master.title("Sample")
 # Globle variables
 ROW_INDEX = 0
+WIDTH = 500
 HEIGHT = 0
+COLORS = ("yellow", "grey", "white", "cyan", "magenta", "blue", "red")
+rows_coord = {}
+boxs_coord = {}
 
 
 def _create_circle(self, x, y, r, **kwargs):
@@ -26,25 +31,66 @@ def _create_circle_arc(self, x, y, r, **kwargs):
 Canvas.create_circle_arc = _create_circle_arc
 
 
-def _create_layout(self, w, h, title, row_num):
-    Label(self, text=title, relief=RIDGE).grid(row=row_num)
-    c = Canvas(self, width=w, height=h)
-    c.grid(row=row_num, column=1)
-    c.create_rectangle(w, h, 3, 3, fill="yellow")
-
-
-Tk.create_layout = _create_layout
+# def _create_layout(self, w, h, title, row_num):
+#     Label(self, text=title, relief=RIDGE).grid(row=row_num)
+#     c = Canvas(self, width=w, height=h)
+#     c.grid(row=row_num, column=1)
+#     c.create_rectangle(w, h, 3, 3, fill="yellow")
+#
+#
+# Tk.create_layout = _create_layout
 
 
 def _create_row(self, title, height=100, color="white"):
-    global ROW_INDEX, HEIGHT
+    global ROW_INDEX, HEIGHT, WIDTH
     self.create_text(60, HEIGHT + height / 2, text=title, anchor=CENTER)
-    self.create_rectangle(450, height + HEIGHT, 110, HEIGHT + 10, fill=color)
+    t = self.create_rectangle(WIDTH, height + HEIGHT,
+                              110, HEIGHT + 10, fill=color)
     ROW_INDEX += 1
     HEIGHT += height
+    return t
 
 
 Canvas.create_row = _create_row
+
+
+def _draw_rows(self, layer_list):
+    global rows_coord
+    t = 0
+    for item in layer_list:
+        if(item == "Job Run"):
+            continue
+        row = self.create_row(item, 80, COLORS[t % len(COLORS)])
+        t += 1
+        # print(self.coords(row))
+        rows_coord[item] = self.coords(row)
+
+
+Canvas.draw_rows = _draw_rows
+
+
+def _draw_tasks(self, task_list):
+    global HEIGHT, boxs_coord
+    t = 1
+    list_len = len(task_list)
+    box_width = (WIDTH - 110) / (list_len + 1)
+    box_height = box_width - 10
+    for item in task_list:
+        rightdown_x = 110 + t * (box_width) + (t - 1) * 10
+        rightdown_y = HEIGHT + 15 + box_height
+        leftup_x = 110 + (t - 1) * box_width + (t - 1) * 10
+        leftup_y = HEIGHT + 15
+        rect = self.create_rectangle(
+            rightdown_x, rightdown_y, leftup_x, leftup_y, fill="white")
+        t += 1
+        boxs_coord[item] = self.coords(rect)
+        self.create_text(leftup_x, rightdown_y + 10, text=item, anchor=W)
+        self.create_text(leftup_x, rightdown_y + 10 +
+                         20, text="*human*", anchor=W)
+    HEIGHT = rightdown_y + 10 + 10
+
+
+Canvas.draw_tasks = _draw_tasks
 
 
 #  Window
@@ -56,17 +102,23 @@ Canvas.create_row = _create_row
 #  |- job run layer
 #  |- notes
 
-c1 = Canvas(master, width=500, height=1000)
-c1.pack()
 
-c1.create_row("archive layer", 100, "yellow")
-c1.create_row("storage layer", 80, "white")
-c1.create_row("network layer", 20, "green")
-c1.create_row(" NVRAM  layer", 90, "grey")
-c1.create_row(" memory layer", 100,)
+if __name__ == '__main__':
+    data = get_data("filename: ")
+    # pprint(data)
+    for key in data.keys():
+        pprint(key)
 
-t1 = c1.create_circle(200, 100, 10, fill="green")
-c1.create_circle(400, 550, 10, fill="red")
-t3 = c1.create_line(200, 100 + 10, 400, 550 - 10)
+    c1 = Canvas(master, width=WIDTH + 30, height=1000)
+    c1.pack()
+    c1.draw_rows(data["layers"])
+    pprint(rows_coord)
 
-master.mainloop()
+    c1.draw_tasks(data["tasks"])
+    pprint(boxs_coord)
+
+    t1 = c1.create_circle(200, 100, 10, fill="green")
+    c1.create_circle(400, 550, 10, fill="red")
+    t3 = c1.create_line(200, 100 + 10, 400, 550 - 10)
+
+    master.mainloop()
