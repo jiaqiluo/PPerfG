@@ -4,7 +4,11 @@
         "Near Storage", "Memory", "Job Run"
     ],
     "tasks": [
-        "Setup", "Application", "Monitoring",
+        "Setup": {
+            "runtime": 100,
+            "colelctrionTool" : "darshan"
+        }
+        , "Application", "Monitoring",
         "Analysis", "Visualization"
     ],
     "dataset": {

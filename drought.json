@@ -1,0 +1,105 @@
+{
+    "layers": ["Storage", "Memory Layer", "Application"],
+    "tasks": ["Python", "VIC Model", "Output"],
+    "dataset": {
+        "date.mat": {
+            "size": 1.234,
+            "type": "Matlab file",
+            "createdLayer": "Storage",
+            "usedLayer": ["Python"],
+            "accessMethod": []
+        },
+        "satellite.mat": {
+            "size": 66.438,
+            "type": "Matlab file",
+            "createdLayer": "Storage",
+            "usedLayer": ["Python"],
+            "accessMethod": []
+        },
+        "forcing in": {
+            "size": 475.101,
+            "type": ".txt file",
+            "createdLayer": "Storage",
+            "usedLayer": ["Python"],
+            "accessMethod": []
+        },
+        "global_param in": {
+            "size": 3.985,
+            "type": ".txt file",
+            "createdLayer": "Storage",
+            "usedLayer": ["Python"],
+            "accessMethod": []
+        },
+        "forcing out": {
+            "size": 0.034,
+            "type": ".txt file",
+            "createdLayer": "Python",
+            "usedLayer": ["Storage", "VIC"],
+            "accessMethod": []
+        },
+        "global_param out": {
+            "size": 4.015,
+            "type": ".txt file",
+            "createdLayer": "Python",
+            "usedLayer": ["Storage", "VIC"],
+            "accessMethod": []
+        },
+        "snowbands_ldas": {
+            "size": 0.117,
+            "type": ".txt file",
+            "createdLayer": "Storage",
+            "usedLayer": ["VIC"],
+            "accessMethod": []
+        },
+        "soil_ldas": {
+            "size": 0.302,
+            "type": ".txt file",
+            "createdLayer": "Storage",
+            "usedLayer": ["VIC"],
+            "accessMethod": []
+        },
+        "veg_ldas": {
+            "size": 0.374,
+            "type": ".txt file",
+            "createdLayer": "Storage",
+            "usedLayer": ["VIC"],
+            "accessMethod": []
+        },
+        "veglib_ldas": {
+            "size": 3.846,
+            "type": ".txt file",
+            "createdLayer": "Storage",
+            "usedLayer": ["VIC"],
+            "accessMethod": []
+        },
+        "vic_output_sm": {
+            "size": 0.037,
+            "type": ".txt file",
+            "createdLayer": "VIC",
+            "usedLayer": ["Storage", "Python"],
+            "accessMethod": []
+        },
+        "vic_output_ini": {
+            "size": 4.44,
+            "type": ".txt file",
+            "createdLayer": "VIC",
+            "usedLayer": ["Storage", "Python"],
+            "accessMethod": []
+        },
+        "surface_sm_out": {
+            "size": 0.073,
+            "type": ".txt file",
+            "createdLayer": "Python",
+            "usedLayer": ["Storage", "Output"],
+            "accessMethod": []
+        },
+        "root_sm_out": {
+            "size": 0.073,
+            "type": ".txt file",
+            "createdLayer": "Python",
+            "usedLayer": ["Storage", "Output"],
+            "accessMethod": []
+        }
+    },
+    "human": ["Python", "Output"]
+}

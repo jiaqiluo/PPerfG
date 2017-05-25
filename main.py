@@ -14,13 +14,6 @@ rows_coord = {}
 boxs_coord = {}
 
 
-def _create_circle(self, x, y, r, **kwargs):
-    return self.create_oval(x - r, y - r, x + r, y + r, **kwargs)
-
-
-Canvas.create_circle = _create_circle
-
-
 def _create_circle_arc(self, x, y, r, **kwargs):
     if "start" in kwargs and "end" in kwargs:
         kwargs["extent"] = kwargs["end"] - kwargs["start"]
@@ -58,7 +51,7 @@ def _draw_rows(self, layer_list):
     global rows_coord
     t = 0
     for item in layer_list:
-        if(item == "Job Run"):
+        if(item == "Job Run" or item == "Application"):
             continue
         row = self.create_row(item, 80, COLORS[t % len(COLORS)])
         t += 1
@@ -93,6 +86,19 @@ def _draw_tasks(self, task_list):
 Canvas.draw_tasks = _draw_tasks
 
 
+def _create_circle(self, x, y, r, **kwargs):
+    return self.create_oval(x - r, y - r, x + r, y + r, **kwargs)
+
+
+Canvas.create_circle = _create_circle
+
+
+def _draw_circle(self, name, data):
+    row = data["createdLayer"]
+
+
+
+Canvas.draw_circle = _draw_circle
 #  Window
 #  |- archive layer
 #  |- storage layer
@@ -116,6 +122,15 @@ if __name__ == '__main__':
 
     c1.draw_tasks(data["tasks"])
     pprint(boxs_coord)
+
+    print(type(data["dataset"]))
+    for i in data["dataset"]:
+        print i
+        c1.draw_circle(i, data["dataset"][i])
+    # for i in data["dataset"].keys() :
+    #     print(i)
+    #     print(data["dataset"][i])
+    #     c1.draw_circle(data["dataset"][i])
 
     t1 = c1.create_circle(200, 100, 10, fill="green")
     c1.create_circle(400, 550, 10, fill="red")
