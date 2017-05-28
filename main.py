@@ -69,18 +69,18 @@ def _draw_tasks(self, task_list):
     box_width = (WIDTH - 110) / (list_len + 1)
     box_height = box_width - 10
     for item in task_list:
-        rightdown_x = 110 + t * (box_width) + (t - 1) * 10
-        rightdown_y = HEIGHT + 15 + box_height
-        leftup_x = 110 + (t - 1) * box_width + (t - 1) * 10
-        leftup_y = HEIGHT + 15
+        rightbottom_x = 110 + t * (box_width) + (t - 1) * 10
+        rightbottom_y = HEIGHT + 15 + box_height
+        lefttop_x = 110 + (t - 1) * box_width + (t - 1) * 10
+        lefttop_y = HEIGHT + 15
         rect = self.create_rectangle(
-            rightdown_x, rightdown_y, leftup_x, leftup_y, fill="white")
+            rightbottom_x, rightbottom_y, lefttop_x, lefttop_y, fill="white")
         t += 1
-        boxs_coord[item] = self.coords(rect)
-        self.create_text(leftup_x, rightdown_y + 10, text=item, anchor=W)
-        self.create_text(leftup_x, rightdown_y + 10 +
+        boxs_coord[item["name"]] = self.coords(rect)
+        self.create_text(lefttop_x, rightbottom_y + 10, text=item["name"], anchor=W)
+        self.create_text(lefttop_x, rightbottom_y + 10 +
                          20, text="*human*", anchor=W)
-    HEIGHT = rightdown_y + 10 + 10
+    HEIGHT = rightbottom_y + 10 + 10
 
 
 Canvas.draw_tasks = _draw_tasks
@@ -97,7 +97,6 @@ def _draw_circle(self, name, data):
     row = data["createdLayer"]
 
 
-
 Canvas.draw_circle = _draw_circle
 #  Window
 #  |- archive layer
@@ -107,7 +106,6 @@ Canvas.draw_circle = _draw_circle
 #  |- memory layer
 #  |- job run layer
 #  |- notes
-
 
 if __name__ == '__main__':
     data = get_data("filename: ")
@@ -123,14 +121,9 @@ if __name__ == '__main__':
     c1.draw_tasks(data["tasks"])
     pprint(boxs_coord)
 
-    print(type(data["dataset"]))
-    for i in data["dataset"]:
+    for i in data["datasets"]:
         print i
-        c1.draw_circle(i, data["dataset"][i])
-    # for i in data["dataset"].keys() :
-    #     print(i)
-    #     print(data["dataset"][i])
-    #     c1.draw_circle(data["dataset"][i])
+        # c1.draw_circle(i, data["dataset"][i])
 
     t1 = c1.create_circle(200, 100, 10, fill="green")
     c1.create_circle(400, 550, 10, fill="red")

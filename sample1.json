@@ -3,65 +3,112 @@
         "Archive", "Storage", "Network",
         "Near Storage", "Memory", "Job Run"
     ],
-    "tasks": [
-        "Setup": {
+    "tasks": [{
+            "name": "Setup",
             "runtime": 100,
-            "colelctrionTool" : "darshan"
+            "collectionTool": "darshan"
+        },
+        {
+            "name": "Application",
+            "runtime": 300,
+            "collectionTool": "oss-man"
+        },
+        {
+            "name": "Monitoring",
+            "runtime": 210,
+            "collectionTool": ""
+        },
+        {
+            "name": "Analysis",
+            "runtime": 20,
+            "collectionTool": ""
+        },
+        {
+            "name": "Visualization",
+            "runtime": 12,
+            "collectionTool": ""
         }
-        , "Application", "Monitoring",
-        "Analysis", "Visualization"
     ],
-    "dataset": {
+    "datasets": {
         "D": {
             "size": 10,
-            "type": "binary file",
-            "createdLayer": "Storage",
-            "usedLayer": ["Setup"],
-            "accessMethod": []
+            "type": "binary file"
         },
         "E": {
             "size": 8,
-            "type": "binary file",
-            "createdLayer": "Setup",
-            "usedLayer": ["Memory"],
-            "accessMethod": []
+            "type": "binary file"
         },
         "A": {
             "size": 15,
-            "type": ".txt file",
-            "createdLayer": "Setup",
-            "usedLayer": ["Memory", "Application"],
-            "accessMethod": ["Memory"]
+            "type": ".txt file"
         },
         "B": {
             "size": 25.3,
-            "type": "internal file",
-            "createdLayer": "Memory",
-            "usedLayer": ["Application"],
-            "accessMethod": []
+            "type": "internal file"
         },
         "C": {
             "size": 22.1,
-            "type": "internal file",
-            "createdLayer": "Storage",
-            "usedLayer": ["A3"],
-            "accessMethod": []
+            "type": "internal file"
         },
         "A1/2": {
             "size": 13.4,
-            "type": "executable file",
-            "createdLayer": "Memory",
-            "usedLayer": ["Application"],
-            "accessMethod": []
+            "type": "executable file"
         },
         "A3": {
             "size": 13.2,
-            "type": "executable file",
-            "createdLayer": "Application",
-            "usedLayer": ["Memory"],
-            "accessMethod": []
+            "type": "executable file"
         }
     },
+    "events": [{
+            "method": "r",
+            "dataset": "D",
+            "origin": "Storage",
+            "destination": "Setup"
+        },
+        {
+            "method": "w",
+            "dataset": "E",
+            "origin": "Setup",
+            "destination": "Storage"
+        },
+        {
+            "method": "w",
+            "dataset": "A",
+            "origin": "Setup",
+            "destination": "Storage"
+        },
+        {
+            "method": "m",
+            "dataset": "A",
+            "origin": "Storage",
+            "destination": "Memory"
+        },
+        {
+            "method": "r",
+            "dataset": "B",
+            "origin": "Storage",
+            "destination": "Application"
+        },
+        {
+            "method": "w",
+            "dataset": "C",
+            "origin": "A3",
+            "destination": "Storage"
+        },
+        {
+            "method": "rw",
+            "dataset": "A1/2",
+            "origin": "A1/2",
+            "destination": "Application"
+        },
+        {
+            "method": "w",
+            "dataset": "A3",
+            "origin": "Application",
+            "destination": "Memory"
+        }
+    ],
+
     "human": [
         "Setup", "Application", "Analysis",
         "Visualization"
