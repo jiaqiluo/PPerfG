@@ -3,8 +3,8 @@ import ttk as ttk
 
 
 class CanvasTooltip:
-    """docstring for CanvasTooltip."""
-
+    """this class allows us to add tooltips to objects inside a canvas
+    """
     def __init__(self,
                  canvas,
                  tag_or_id,
@@ -26,27 +26,39 @@ class CanvasTooltip:
         self.tw = None
 
     def onEnter(self, event=None):
+        """schedule an event(tooltip) when the cursur enters the object
+        """
         self.schedule()
 
     def onLeave(self, event=None):
+        """unschedule and hide the tooltip when the cursur leaves the object
+        """
         self.unschedule()
         self.hide()
 
     def schedule(self):
+        """make sure the event is unscheduleed and then invoke callback function
+        """
         self.unschedule()
         self.id = self.canvas.after(self.waittime, self.show)
 
     def unschedule(self):
+        """unschedule the event if it exists
+        """
         id_ = self.id
         self.id = None
         if id_:
             self.canvas.after_cancel(id_)
 
     def show(self, event=None):
+        """display the tooltip in a clear format
+        """
         def tip_pos_calculator(canvas,
                                label,
                                tip_delta=(10, 5),
                                pad=(5, 3, 5, 3)):
+            """claculate the appropriate position for the tooltip
+            """
             c = canvas
             s_width, s_height = c.winfo_screenwidth(), c.winfo_screenheight()
             width, height = (pad[0] + label.winfo_reqwidth() + pad[2],
@@ -99,6 +111,8 @@ class CanvasTooltip:
         self.tw.wm_geometry("+%d+%d" % (x, y))
 
     def hide(self):
+        """hide and destroy the event(tooltip)
+        """
         if self.tw:
             self.tw.destroy()
         self.tw = None
