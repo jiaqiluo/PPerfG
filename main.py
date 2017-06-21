@@ -1,191 +1,185 @@
 #!/usr/bin/python
 from Tkinter import *
 import math
+
 from load import *
 from canvasTooltip import *
+from myCanvas import myCanvas
+import globalVariables as gv
 
 
-class MyCanvas(Canvas):
-    """this class contains data members and functions for drawing the diagram
-       and it inherits class 'Canvas' from Tkinter
+def parse(data):
+    """parses the input data to buildup the data structure inside the program
 
-    Attributes:
-        row_index (int)  : a local variable
-        width (int)      : the width of the diagram window
-        height (int)     : the height of the diagram window
-        colors (tuple)   : the list of colors used for different data types
-        rows_coord (list): a local variable for ...
-        boxs_coord (list): a local variable for ...
-        tooltips (array) : a local variable for ...
+    Arg:
+        data: a list which contains everything readed from the file
+
+    Return:
+        node_list (list of Node): all nodes in the tree
     """
-    row_index = 0
-    width = 500
-    height = 0
-    colors = ("yellow", "grey", "white", "cyan", "magenta", "blue", "red")
-    rows_coord = {}
-    boxs_coord = {}
-    tooltips = []
-
-    def create_circle_arc(self, x, y, r, **kwargs):
-        """draws an arc, pieslice, or chord on the canvas.
-
-        Args:
-            x (float): x coordinates of the center
-            y (float): y coordinates of the center
-            r (float): the radius of the circle
-            kwargs: other arguments (see Tkinter document for details)
-
-        Return:
-            the item id
-        """
-        if "start" in kwargs and "end" in kwargs:
-            kwargs["extent"] = kwargs["end"] - kwargs["start"]
-            del kwargs["end"]
-        return self.create_arc(x - r, y - r, x + r, y + r, **kwargs)
-
-    def create_row(self, title, height=100, color="white"):
-        """draw a row in the canvas
-
-        Args:
-            title (string): the title of the row
-            height(int)   : the height of the row, initial value is 100
-            color(string) : the background color of the row
-
-        Return:
-            the item id
-        """
-        self.create_text(
-            60, self.height + height / 2, text=title, anchor=CENTER)
-        t = self.create_rectangle(
-            self.width,
-            height + self.height,
-            110,
-            self.height + 10,
-            fill=color)
-        self.row_index += 1
-        self.height += height
-        return t
-
-    def draw_rows(self, layer_list):
-        """draw several layers from the top to the bottom
-
-        Arg:
-            layer_list (list): a list of names of layers
-        """
-        t = 0
-        for item in layer_list:
-            if (item == "Job Run" or item == "Application"):
-                continue
-            row = self.create_row(item, 80, self.colors[t % len(self.colors)])
-            t += 1
-            # print(self.coords(row))
-            self.rows_coord[item] = self.coords(row)
-        return
-
-    def draw_tasks(self, task_list):
-        """draw tasks in the 'Job Run'(or named differntly) layer
-
-        Arg:
-            task_list (list): a list of tasks
-        """
-        t = 1
-        list_len = len(task_list)
-        box_width = (self.width - 110) / (list_len + 1)
-        box_height = box_width - 10
-        for item in task_list:
-            # calculate coordinates
-            rightbottom_x = 110 + t * (box_width) + (t - 1) * 10
-            rightbottom_y = self.height + 15 + box_height
-            lefttop_x = 110 + (t - 1) * box_width + (t - 1) * 10
-            lefttop_y = self.height + 15
-            t += 1
-            rect = self.create_rectangle(
-                rightbottom_x,
-                rightbottom_y,
-                lefttop_x,
-                lefttop_y,
-                fill="white",
-                activefill="yellow",
-                tags=("rectangle", t))
-            self.boxs_coord[item["name"]] = self.coords(rect)
-            self.create_text(
-                lefttop_x, rightbottom_y + 10, text=item["name"], anchor=W)
-            info = "name: " + str(item["name"]) + \
-                "\nruntime: " + str(item["runtime"]) + \
-                "\ncollectionTool: " + str(item["collectionTool"])
-            # bind the task object with a callback function
-            tooltip = CanvasTooltip(self, rect, text=info)
-
-        self.height = rightbottom_y + 10 + 10
-        self.tooltips.append(tooltip)
-        return
-
-    def create_circle(self, x, y, r, **kwargs):
-        """draws a circle on the canvas
-
-        Args:
-            x (float): x coordinates of the center
-            y (float): y coordinates of the center
-            r (float): the radius of the circle
-            kwargs: other arguments (see Tkinter document for details)
-
-        Return:
-            the item id
-        """
-        return self.create_oval(x - r, y - r, x + r, y + r, **kwargs)
-
-    def onClick(self, event):
-        """
-        """
-        coords = self.canvasx(event.x, 1), self.canvasy(event.y, 1)
-        found = self.find_closest(*coords)[0]
-        if found:
-            self.target = found
-            self.drag_x, self.drag_y = coords
-            self.tag_raise(found)
-        else:
-            self.target, self.drag_x, self.drag_y = None, None, None
-
-    def onDrag(self, event):
-        """
-        """
-        if self.target is None:
-            return
-        coords = self.canvasx(event.x, 1), self.canvasy(event.y, 1)
-        self.move(self.target, coords[0] - self.drag_x,
-                  coords[1] - self.drag_y)
-        self.drag_x, self.drag_y = coords
-
-    def onRelease(self, event):
-        """reset relevent attribtues to None when cursur moves out the item
-        """
-        self.target, self.drag_x, self.drag_y = None, None, None
+    node_list = []
+    # 1. get the name of all nodes
+    name_list = data["datasets"].keys()
+    for t in data["tasks"]:
+        name_list.append(t["name"])
+    # 2. create all nodes and save them to node_list
+    # note: here the order of node in the node_list is the same as the
+    # order in the datasets, and we will take advantage of this fact in
+    # the following design and development
+    for item in name_list:
+        temp = Node(item)
+        node_list.append(temp)
+    # 3. get detaied info for tasks
+    #    and save them to corresponding node
+    layers_length = len(data["layers"])
+    for task in data["tasks"]:
+        idx = name_list.index(task["name"])
+        node_list[idx].set_runtime(task["runtime"])
+        node_list[idx].set_collectionTool(task["collectionTool"])
+        node_list[idx].set_placed_layer(task["name"], layers_length)
+    # 4. get detaied info for dataset
+    #    and save them to corresponding node
+    for item in data["datasets"]:
+        idx = name_list.index(item)
+        node_list[idx].set_size(data["datasets"][item]["size"])
+        node_list[idx].set_type(data["datasets"][item]["type"])
+    # 5. traverse events to add more details to each node
+    for event in data["events"]:
+        # get the index of the corresponding node in
+        # datasets, which is the same as in node_list
+        idx = name_list.index(event["dataset"])
+        # set the layer of the node, if the method is "read",
+        # then the origin is the layer where the node should be placed
+        if event["method"] == "r":
+            layer_idx = data["layers"].index(event["origin"]) + 1
+            if node_list[idx].get_placed_layer_idx() == -1:
+                node_list[idx].set_placed_layer(event["origin"], layer_idx)
+            # the node for destination is its child_node
+            child_idx = name_list.index(event["destination"])
+            node_list[idx].set_child(node_list[child_idx])
+            node_list[idx].set_direction(1)
+            node_list[child_idx].set_parent(node_list[idx])
+        # if the method is "write", then the destination is always a layer
+        # where the node should be placed
+        elif event["method"] == "w":
+            layer_idx = data["layers"].index(event["destination"]) + 1
+            if node_list[idx].get_placed_layer_idx() == -1:
+                node_list[idx].set_placed_layer(event["destination"], layer_idx)
+            # the node for destination is its child_node
+            child_idx = name_list.index(event["origin"])
+            node_list[idx].set_child(node_list[child_idx])
+            node_list[idx].set_direction(2)
+            node_list[child_idx].set_parent(node_list[idx])
+        # if the method is "read/write", then the origin is always a layer
+        # where the node should be placed
+        elif event["method"] == "rw":
+            layer_idx = data["layers"].index(event["origin"]) + 1
+            if node_list[idx].get_placed_layer_idx() == -1:
+                node_list[idx].set_placed_layer(event["origin"], layer_idx)
+            # the node for destination is its child_node
+            child_idx = name_list.index(event["destination"])
+            node_list[idx].set_child(node_list[child_idx])
+            node_list[idx].set_direction(3)
+            node_list[child_idx].set_parent(node_list[idx])
+    return node_list
 
 
-if __name__ == '__main__':
+#
+# def set_radius(canvas, node_list, radius_max):
+#     data_size_list = []
+#     for node in node_list:
+#         data_size_list.append(node.get_size())
+#     largerest = max(data_size_list)
+#     data_size_list.sort()
+#     data_size_list.reverse()
+#     for node in node_list:
+#         data_size = node.get_size()
+#         if data_size > 0:
+#             r = radius_max - data_size_list.index(data_size) * 0.5
+#             node.set_radius(r)
+#     return
+#
+#
+def set_task_coord(canvas, node_list):
+    for node in node_list:
+        if node.get_size() == 0:
+            coord = canvas.get_layer_coordinate(node.get_name())
+            [x, y] = (coord[2] + coord[0]) / 2, coord[1]
+            node.set_coord([x, y])
+    return
+
+
+#
+#
+# def set_node_coordinate(canvas, node_list):
+#     # 1. set all tasks first
+#     for node in node_list:
+#         if node.get_size() == 0:
+#             set_task_coord(canvas, node)
+#     # 2. set all circrls then
+#     boundary = {}
+#     for node in node_list:
+#         if node.get_size() != 0:
+#             set_circle_origin(canvas, node, boundary)
+#
+#
+# def set_circle_origin(canvas, node, x_boundary):
+#     # print node.get_name(),"is on layer: ",node.get_placed_layer(),"Coord: ", canvas.get_layer_coordinate(node.get_placed_layer())
+#     placed_layer = node.get_placed_layer()
+#     # 1. get the left and bound of the x-coordinate of available area
+#     if placed_layer not in x_boundary.keys():
+#         layer_coord = canvas.get_layer_coordinate(placed_layer)
+#         x_boundary[placed_layer] = layer_coord
+#         temp_left_most = layer_coord[0]
+#     else:
+#         temp_left_most = left_most_x[placed_layer][0]
+#     # 2. get the right bound of x-coordinate of available area
+#     temp_right_most = left_most_x[placed_layer][2]
+#     # 3. get the upper bound
+#     temp_up_most = left_most_x[placed_layer][1]
+#     temp_down_most = left_most_x[placed_layer][3]
+
+
+def set_root(root, node_list):
+    for node in node_list:
+        if node.get_parent() == 0:
+            node.set_parent(root)
+            root.set_child(node)
+    return
+
+
+def main():
     master = Tk()
     master.title("Sample")
     frame = ttk.Frame(master)
     data = get_data("filename: ")
 
-    for key in data.keys():
-        pprint(key)
-
-    c = frame.canvas = MyCanvas(master, width=530, height=1000)
+    width = 500
+    height = 600
+    c = myCanvas(master, width=gv.window_width, height=gv.window_heiht)
     # c.pack()
-    c.draw_rows(data["layers"])
-    c.draw_tasks(data["tasks"])
+    c.draw_layers(data["layers"], gv.layer_height, gv.layer_width)
+    c.draw_tasks(data["tasks"], gv.window_width)
     # c.tag_bind('rectangle', '<Button-1>', c.onClick)
     # c.tag_bind('rectangle', '<B1-Motion>', c.onDrag)
     # c.tag_bind('rectangle', '<ButtonRelease-1>', c.onRelease)
     c.grid(column=0, row=0, padx=(0, 0), pady=(0, 0))
-    for i in data["datasets"]:
-        print i
-        # c1.draw_circle(i, data["dataset"][i])
 
     t1 = c.create_circle(200, 100, 10, fill="green")
     c.create_circle(400, 550, 10, fill="red")
     t3 = c.create_line(200, 100 + 10, 400, 550 - 10)
 
+    node_list = parse(data)
+    root = Node("root")
+    set_root(root, node_list)
+    set_task_coord(c, node_list)
+    root.traverse_display(0)
+    root.get_scope(0)
+    # for item in node_list:
+    #     item.display()
     frame.grid()
     master.mainloop()
+
+
+if __name__ == '__main__':
+    main()

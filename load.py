@@ -57,67 +57,8 @@ def get_data(prompt):
         return data
 
 
-def parse(data):
-    """parses the input data to buildup the data structure inside the program
-
-    Arg:
-        list: a list which contains everything readed from the file
-    """
-    node_list = []
-    # 1. get the name of all nodes
-    datasets = data["datasets"].keys()
-    for t in data["tasks"]:
-        datasets.append(t["name"])
-    # 2. create all nodes and save them to node_list
-    for item in datasets:
-        temp = Node(item)
-        node_list.append(temp)
-    # 3. get detaied info for tasks
-    #    and save them to corresponding node
-    layers_length = len(data["layers"])
-    for task in data["tasks"]:
-        idx = datasets.index(task["name"])
-        node_list[idx].set_runtime(task["runtime"])
-        node_list[idx].set_collectionTool(task["collectionTool"])
-        node_list[idx].set_placed_layer(layers_length - 1)
-    # 4. get detaied info for dataset
-    #    and save them to corresponding node
-    for item in data["datasets"]:
-        idx = datasets.index(item)
-        node_list[idx].set_size(data["datasets"][item]["size"])
-        node_list[idx].set_type(data["datasets"][item]["type"])
-    # 5. traverse events to add more details to each node
-    for event in data["events"]:
-        # get the index of the corresponding node in
-        # datasets, which is the same as in node_list
-        idx = datasets.index(event["dataset"])
-        # set the layer of the node
-        # if the method is "read",
-        # then the origin is always a layer where the node should be placed
-        if event["method"] == "r":
-            layer_idx = data["layers"].index(event["origin"])
-            node_list[idx].set_placed_layer(layer_idx)
-            # the node for destination is its child_node
-        # if the method is "write", then the destination is always a layer
-        # where the node should be placed
-        elif event["method"] == "w":
-            layer_idx = data["layers"].index(event["destination"])
-            node_list[idx].set_placed_layer(layer_idx)
-        # if the method is "read/write", then the origin is always a layer
-        # where the node should be placed
-        elif event["method"] == "rw":
-            layer_idx = data["layers"].index(event["origin"])
-            node_list[idx].set_placed_layer(layer_idx)
-
-    for i in node_list:
-        print i.display()
-
-
 if __name__ == '__main__':
     # data = get_data("filename: ")
     data = read_in("sample1.json")
     # for key in data.keys():
     #     pprint(key)
-
-    print "-----------\ntest for parsing"
-    parse(data)

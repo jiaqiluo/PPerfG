@@ -1,3 +1,5 @@
+import globalVariables as gv
+
 class Node:
     """This class contains data members and functions of a Node
 
@@ -11,28 +13,59 @@ class Node:
         runtime (int): how long the task runs, intial value is 0
         collectionTool (string): the name of the tool used to collect the data
     """
-    parent = []
-    children = []
-    placed_layer = -1
-    name = ""
-    # if it is a dataset
-    size = 0
-    data_type = ""
-    # if it is a task
-    runtime = 0
-    collectionTool = ""
 
     def __init__(self, name):
         """the very basic constructor of the class
 
         Since the node might be either a dataset or a task, so we leave
         setting values to other functions. But 'name' is a must-have attribute
-        for both, so we set the name in this basic constructor.
+        so we set the name in this basic constructor.
 
         Arg:
             name (string): the name of the node
         """
         self.name = name
+        self.parent = []
+        self.children = []
+        self.direction = []
+        self.layer_name = ""
+        self.layer_idx = -1
+        self.coordinate = [0, 0]
+        # if it is a dataset
+        self.size = 0
+        self.radius = 0
+        self.data_type = ""
+        # if it is a task
+        self.runtime = 0
+        self.collectionTool = ""
+
+    def traverse_display(self, n):
+        for i in self.children:
+            i.traverse_display(n + 1)
+        if len(self.children) == 0:
+            print "   " * n, "name:", self.name, "(leaf, coord:", self.get_coord(
+            ), ")"
+        else:
+            print "   " * n, "name: ", self.name
+        return
+
+    def get_scope(self, ident):
+        x_list = []
+        left_most = gv.layer_name_width
+        right_most = 0
+        for item in self.children:
+            temp = item.get_scope(ident+4)
+            for t in temp:
+                x_list.append(t)
+        t = self.coordinate[0]
+        if t != 0:
+            x_list.append(t)
+        x_list.sort()
+        print "  " * ident, self.name, x_list
+        return x_list
+
+
+
 
     def display(self):
         """display the content of the current node in a clear format
@@ -41,18 +74,24 @@ class Node:
         print "name: ", self.name
         print "size: ", self.size
         print "data type: ", self.data_type
-        print "placed_layer: ", self.placed_layer
+        print "layer_name: ", self.layer_name
+        print "layer_idx: ", self.layer_idx
         print "runtime: ", self.runtime
         print "collectionTool: ", self.collectionTool
+        print "direction: ", self.direction
         print "parent: "
         if self.parent != 0:
             for item in self.parent:
                 print " ", item.name
         print "children: "
-        if self.children != 0:
-            for item in self.children:
-                print " ", item.name
+        for i in range(len(self.children)):
+            print self.children[i].get_name()
         return
+
+    def get_name(self):
+        """return the name of the current node
+        """
+        return self.name
 
     def set_runtime(self, runtime):
         """set the runtime of the current node if it is a task
@@ -84,6 +123,9 @@ class Node:
             self.size = size
         return
 
+    def get_size(self):
+        return self.size
+
     def set_type(self, data_type):
         """set the datatype of the current node if it is a dataset
 
@@ -102,7 +144,15 @@ class Node:
         """
         if parent_node != 0:
             self.parent.append(parent_node)
+        else:
+            print("invalid parent node")
         return
+
+    def get_parent(self):
+        if len(self.parent) != 0:
+            return self.parent
+        else:
+            return 0
 
     def set_child(self, child_node):
         """set the child of the current node
@@ -112,22 +162,61 @@ class Node:
         """
         if child_node != 0:
             self.children.append(child_node)
+        else:
+            print("invalid child node")
         return
 
-    def set_placed_layer(self, placed_layer):
+    def set_placed_layer(self, name, idx):
         """set the placed_layer of the current node
 
         Arg:
             placed_layer (int): the layer the current node placed in the tree
         """
-        if placed_layer != "":
-            self.placed_layer = placed_layer
+        self.layer_name = name
+        self.layer_idx = idx
         return
+
+    def get_placed_layer_name(self):
+        """return the layer numer
+        """
+        return self.layer_name
+
+    def get_placed_layer_idx(self):
+        """return the layer index
+        """
+        return self.layer_idx
+
+    def set_direction(self, mode=0):
+        """set the direction of the arrow line between the node and its children
+
+        Arg:
+            mode (int): 0 - no direction;
+                        1 - from the current node to child;
+                        2 - from child to the current node
+                        3 - two-drection arrow
+        """
+        if mode in [0, 1, 2, 3]:
+            self.direction.append(mode)
+        else:
+            print("invalid mode value")
+        return
+
+    def set_radius(self, radius):
+        if radius != 0:
+            self.radius = radius
+        return
+
+    def get_radius(self):
+        return self.radius
+
+    def set_coord(self, coord):
+        self.coordinate = coord
+        return
+
+    def get_coord(self):
+        return self.coordinate
 
 
 if __name__ == '__main__':
-    p = Node("p", 10, "binary file", None, None)
-    c1 = Node("c1", 5, "child file", None, None)
-    c2 = Node("c2", 8, "child file", None, None)
-    t = Node("t", 100, "tset file", p, [c1, c2])
+    t = Node("t")
     t.display()
