@@ -1,13 +1,3 @@
-### Window:
-
-	|- archive layer
-	|- storage layer
-	|- network
-	|- near storage layer - NVRAM
-	|- memory layer
-	|- job run layer
-	|- notes
-
 ### Variables
 1. layers  - The order of items in the array
              will be used as the order in diagram from top to below.
@@ -32,11 +22,5 @@
 
 ### Colors
 
-Layers' color will be fixed order as the sample diagram shows.
-Circles for dataset will choose a different color with its layer to make it detectable.
-
-## Future plan
-1. add support for moving action
-
-## Notes
-1. the placed_layer start at 1
+Layers' color will be in fixed order as the sample diagram shows.
+Circles representing same type of data will have the same color. And the specific color can be set in the "globalVariables.py" file.

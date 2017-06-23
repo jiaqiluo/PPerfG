@@ -1,5 +1,3 @@
-# this file contains functions for loading and parsing Json file in the
-# program.
 import os
 import re
 import json

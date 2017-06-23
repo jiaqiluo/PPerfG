@@ -96,12 +96,6 @@
             "destination": "Application"
         },
         {
-            "method": "m",
-            "dataset": "C",
-            "origin": "Storage",
-            "destination": "Near Storage"
-        },
-        {
             "method": "w",
             "dataset": "A3",
             "origin": "Application",
@@ -112,12 +106,6 @@
             "dataset": "E",
             "origin": "Storage",
             "destination": "Analysis"
-        },
-        {
-            "method": "m",
-            "dataset": "D",
-            "origin": "Storage",
-            "destination": "Memory"
         }
     ]
 }

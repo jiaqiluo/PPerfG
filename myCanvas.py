@@ -121,9 +121,9 @@ class myCanvas(Canvas):
                 "\ncollectionTool: " + str(item["collectionTool"])
             # bind the task object with a callback function
             tooltip = CanvasTooltip(self, rect, text=info)
+            self.tooltips.append(tooltip)
 
         self.height = rightbottom_y + 10 + 10
-        self.tooltips.append(tooltip)
         return
 
     def create_circle(self, x, y, r, **kwargs):
@@ -138,4 +138,40 @@ class myCanvas(Canvas):
         Return:
             the item id
         """
-        return self.create_oval(x - r, y - r, x + r, y + r, **kwargs)
+        self.create_oval(x - r, y - r, x + r, y + r, **kwargs)
+
+    def create_arrow(self, x, y, direction):
+        """ draw an arrow centered at the the specific position
+
+        Args:
+            x (float): x coordinates of the center
+            y (float): y coordinates of the center
+            direction (int): 1 - for r;     2 - for w
+                             3 - for r/w;   4 - for m
+        """
+        if direction == 1:
+            x1 = x - 7
+            x2 = x + 7
+            y1 = y - 7
+            y2 = y - 7
+            self.create_line(x1, y1, x, y)
+            self.create_line(x2, y2, x, y)
+        elif direction == 2:
+            x1 = x - 7
+            x2 = x + 7
+            y1 = y + 7
+            y2 = y + 7
+            self.create_line(x1, y1, x, y)
+            self.create_line(x2, y2, x, y)
+        elif direction == 3:
+            x1 = x - 7
+            x2 = x + 7
+            y1 = y - 7
+            y2 = y - 7
+            self.create_line(x1, y1, x, y)
+            self.create_line(x2, y2, x, y)
+            y1 = y + 7
+            y2 = y + 7
+            self.create_line(x1, y1, x, y)
+            self.create_line(x2, y2, x, y)
+        return
