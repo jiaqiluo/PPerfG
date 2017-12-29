@@ -58,5 +58,5 @@ def get_data(prompt):
 if __name__ == '__main__':
     # data = get_data("filename: ")
     data = read_in("sample1.json")
-    # for key in data.keys():
-    #     pprint(key)
+    for key in data.keys():
+        pprint(key)

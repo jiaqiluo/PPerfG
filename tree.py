@@ -5,16 +5,23 @@ class Node:
     """This class contains data members and functions of a Node
 
     Attributes:
+        name (string): the name of the node
         parent (list of Node): the list of parents of the current node
         children (list of Node): the list of children of the current node
-        placed_layer (int): the layer of the node in the tree, initial value -1
-        name (string): the name of the node
+        same_layer_nodes (list of Node): the list of node with the same layer
+        direction (list of int): the list of directions between this node and
+                                 nodes in children list
+        layer_name (string): the name of the layer this node placed
+        layer_idx (int): the index of the the layer this node placed
+        coordinate ([x,y]): the coordinate of this node in the diagram
         size (int): the size of the dataset, initial value is 0
+        radius (float): the radius of the circle if the node is a dataset
         data_type (string): the data type of the dataset
+        is_copy (int): whether this node is duplicated in the diagram
         runtime (int): how long the task runs, intial value is 0
         collectionTool (string): the name of the tool used to collect the data
     """
-    radius_list = []
+    radius_list = [] # radiuses apprearing in all node
 
     def __init__(self, name):
         """the very basic constructor of the class

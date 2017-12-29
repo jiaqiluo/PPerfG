@@ -63,13 +63,18 @@ class myCanvas(Canvas):
         Return:
             the item id
         """
-        self.create_text(60, self.height + height/2, text=title, anchor=CENTER)
+        self.create_text(
+            60, self.height + height / 2, text=title, anchor=CENTER)
         upper_left_x = gv.layer_name_width
         upper_left_y = self.height
         bottom_right_x = width
         bottom_right_y = height + self.height
-        t = self.create_rectangle(bottom_right_x, bottom_right_y,
-                                  upper_left_x, upper_left_y, fill=color)
+        t = self.create_rectangle(
+            bottom_right_x,
+            bottom_right_y,
+            upper_left_x,
+            upper_left_y,
+            fill=color)
         self.layer_index += 1
         self.height += height
         self.layer_list.append(t)
@@ -78,14 +83,17 @@ class myCanvas(Canvas):
     def draw_layers(self, layer_list, layer_height, layer_width):
         """draw several layers from the top to the bottom
 
+        Note:
+            it ignores the last element in the list
+
         Arg:
             layer_list (list): a list of names of layers
         """
         i = 0
-        for item in layer_list:
-            row = self.draw_layer(item, layer_height, layer_width, self.colors[i % len(self.colors)])
-            i += 1
-            self.layer_coord[item] = self.coords(row)
+        for i in range(len(layer_list) - 1):
+            row = self.draw_layer(layer_list[i], layer_height, layer_width,
+                                  self.colors[i % len(self.colors)])
+            self.layer_coord[layer_list[i]] = self.coords(row)
         return
 
     def draw_tasks(self, task_list, width):
@@ -146,8 +154,9 @@ class myCanvas(Canvas):
         Args:
             x (float): x coordinates of the center
             y (float): y coordinates of the center
-            direction (int): 1 - for r;     2 - for w
-                             3 - for r/w;   4 - for m
+            direction (int): 1 - for r, m
+                             2 - for w
+                             3 - for r/w
         """
         if direction == 1:
             x1 = x - 7
